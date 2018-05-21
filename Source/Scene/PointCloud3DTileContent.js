@@ -1377,23 +1377,25 @@ define([
                 content._decodingState = DecodingState.DECODING;
                 decodePromise.then(function(result) {
                     content._decodingState = DecodingState.READY;
-                    var decodedPositions = defined(result.POSITION) ? result.POSITION.array : undefined;
-                    var decodedRgb = defined(result.RGB) ? result.RGB.array : undefined;
-                    var decodedRgba = defined(result.RGBA) ? result.RGBA.array : undefined;
-                    var decodedNormals = defined(result.NORMAL) ? result.NORMAL.array : undefined;
-                    var decodedBatchIds = defined(result.BATCH_ID) ? result.BATCH_ID.array : undefined;
+                    content._pointsLength = result.pointsLength;
+                    var attributeData = result.attributeData;
+                    var decodedPositions = defined(attributeData.POSITION) ? result.POSITION.array : undefined;
+                    var decodedRgb = defined(attributeData.RGB) ? attributeData.RGB.array : undefined;
+                    var decodedRgba = defined(attributeData.RGBA) ? attributeData.RGBA.array : undefined;
+                    var decodedNormals = defined(attributeData.NORMAL) ? attributeData.NORMAL.array : undefined;
+                    var decodedBatchIds = defined(attributeData.BATCH_ID) ? attributeData.BATCH_ID.array : undefined;
                     parsedContent.positions = defaultValue(decodedPositions, parsedContent.positions);
                     parsedContent.colors = defaultValue(defaultValue(decodedRgba, decodedRgb), parsedContent.colors);
                     parsedContent.normals = defaultValue(decodedNormals, parsedContent.normals);
                     parsedContent.batchIds = defaultValue(decodedBatchIds, parsedContent.batchIds);
                     if (content._isQuantizedDraco) {
-                        var quantization = result.POSITION.data.quantization;
+                        var quantization = attributeData.POSITION.data.quantization;
                         var scale = quantization.range / (1 << quantization.quantizationBits);
                         content._quantizedVolumeScale = Cartesian3.fromElements(scale, scale, scale);
                         content._quantizedVolumeOffset = Cartesian3.unpack(quantization.minValues);
                     }
                     if (content._isOctEncodedDraco) {
-                        content._octEncodedRange = (1 << result.NORMAL.data.quantization.quantizationBits) - 1.0;
+                        content._octEncodedRange = (1 << attributeData.NORMAL.data.quantization.quantizationBits) - 1.0;
                     }
                 }).otherwise(function(error) {
                     content._decodingState = DecodingState.FAILED;

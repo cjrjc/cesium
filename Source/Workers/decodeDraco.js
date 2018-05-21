@@ -201,7 +201,11 @@ define([
 
         draco.destroy(buffer);
 
-        var result = {};
+        var attributeData = {};
+        var result = {
+            pointsLength : dracoPointCloud.num_points(),
+            attributeData : attributeData
+        };
 
         var semantics = parameters.semantics;
         var semanticsLength = semantics.length;
@@ -213,7 +217,7 @@ define([
             }
             var attributeId = dracoDecoder.GetAttributeId(dracoPointCloud, attributeType);
             var dracoAttribute = dracoDecoder.GetAttribute(dracoPointCloud, attributeId);
-            result[semantic] = decodeAttribute(dracoPointCloud, dracoDecoder, dracoAttribute);
+            attributeData[semantic] = decodeAttribute(dracoPointCloud, dracoDecoder, dracoAttribute);
         }
 
         draco.destroy(dracoPointCloud);
