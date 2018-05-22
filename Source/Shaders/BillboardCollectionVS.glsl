@@ -16,7 +16,7 @@ attribute float a_batchId;
 #endif
 
 varying vec2 v_textureCoordinates;
-varying vec2 v_adjustedTextureCoordinate;
+varying vec4 v_textureOffset;
 varying vec2 v_depthLookupTextureCoordinate;
 varying vec2 v_dimensions;
 
@@ -157,10 +157,7 @@ void main()
 
     vec2 imageSize = vec2(floor(temp), compressedAttribute2.w);
 
-    vec2 adjustedST = textureCoordinates - textureOffset.xy;
-    adjustedST = adjustedST / (textureOffset.z - textureOffset.x, textureOffset.w - textureOffset.y);
-
-    v_adjustedTextureCoordinate = adjustedST;
+    v_textureOffset = textureOffset;
     v_depthLookupTextureCoordinate = (0.0, 1.0) - depthLookupST;
     v_dimensions = imageSize.xy;
 
