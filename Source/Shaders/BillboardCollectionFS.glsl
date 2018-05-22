@@ -8,6 +8,7 @@ varying vec2 v_textureCoordinates;
 varying vec4 v_textureOffset;
 varying vec2 v_depthLookupTextureCoordinate;
 varying vec2 v_dimensions;
+varying float v_eyeDepth;
 
 #ifdef RENDER_FOR_PICK
 varying vec4 v_pickColor;
@@ -68,12 +69,33 @@ vec2 st = ((v_dimensions.xy * (v_depthLookupTextureCoordinate - adjustedST)) + g
 
     czm_writeLogDepth();
 
-
+/*
     vec2 coords = gl_FragCoord.xy / czm_viewport.zw;
     float logDepth = czm_unpackDepth(texture2D(czm_globeDepthTexture, coords));
-    float depth = czm_reverseLogDepth(logDepth);
-    if (depth <= gl_FragDepthEXT)
+    float globeDepth = czm_reverseLogDepth(logDepth);
+
+    if (globeDepth <= depth)
     {
-        discard;
+        //discard;
+        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+    }
+    else
+    {
+        gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+    }
+    */
+
+    float logDepthOrDepth = czm_unpackDepth(texture2D(czm_globeDepthTexture, gl_FragCoord.xy / czm_viewport.zw));
+    vec4 eyeCoordinate = czm_windowToEyeCoordinates(gl_FragCoord.xy, logDepthOrDepth);
+    float globeDepth = eyeCoordinate.z / eyeCoordinate.w;
+
+    // negative values go into the screen
+    if (globeDepth > v_eyeDepth)
+    {
+        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+    }
+    else
+    {
+        gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
     }
 }

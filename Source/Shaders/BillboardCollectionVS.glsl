@@ -19,6 +19,7 @@ varying vec2 v_textureCoordinates;
 varying vec4 v_textureOffset;
 varying vec2 v_depthLookupTextureCoordinate;
 varying vec2 v_dimensions;
+varying float v_eyeDepth;
 
 #ifdef RENDER_FOR_PICK
 varying vec4 v_pickColor;
@@ -210,6 +211,9 @@ void main()
 
     vec4 p = czm_translateRelativeToEye(positionHigh, positionLow);
     vec4 positionEC = czm_modelViewRelativeToEye * p;
+
+    v_eyeDepth = positionEC.z;
+
     positionEC = czm_eyeOffset(positionEC, eyeOffset.xyz);
     positionEC.xyz *= show;
 
